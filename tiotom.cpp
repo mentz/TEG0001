@@ -70,18 +70,24 @@ int  main()
 	while (cin >> h >> w && h && w)
 	{
 		a = h; b = w; source = 0; sink = h*w+1;
+		// Criar variáveis locais e setar Source e Sink.
+
 		mapa.assign(h + 2, vector<int> (w + 2, 1));
 		visited.assign(h * w + 2, false);
+
+		// BEGIN Leitura de lagos
 		cin >> a;
 		while (a--)
 		{
-			cin >> y >> x;
+			cin >> x >> y;
 			mapa[y][x] = 0;
-			visited[x+(y-1)*w] = true;
+			visited[y+(x-1)*w] = true;
 		}
+		// END Leitura de lagos
 
 		adj.assign(h * w + 2, vector<int> (h * w + 2, 0));
 
+		// BEGIN Transformar mapa em grafo, identificando cada célula com um ID (c)
 		c = 1; // 0 é reservado pra source
 		for (int i = 1; i <= h; i++)
 		{
@@ -97,14 +103,15 @@ int  main()
 				c++;
 			}
 		}
+		// END Transformar para em grafo
 
 		printf("\nTerras:\n");
-		for (int i = 1; i <= h*w; i++)
+		for (int i = 0; i <= h*w+1; i++)
 		{
 			printf("%s%s", visited[i] ? "-": "S", !(i%4)? "\n" : " ");
 		} printf("\n");
 
-		bipartir_BFS(adj);
+		bipartir_com_BFS(adj);
 
 		for (int i = 0; i <= h*w + 1; i++)
 		{
