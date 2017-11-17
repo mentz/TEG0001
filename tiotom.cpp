@@ -29,9 +29,9 @@ int  main()
 		cin >> a;
 		while (a--)
 		{
-			cin >> x >> y;
+			cin >> y >> x;
 			mapa[y][x] = 0;
-			visited[y+(x-1)*w] = true;
+			visited[x+(y-1)*w] = true;
 		}
 		// END Leitura de lagos
 
@@ -54,6 +54,20 @@ int  main()
 			}
 		}
 		// END Transformar para em grafo
+
+		cout << endl << "  ";
+		for (int i = 0; i < n; i++)
+			cout << setw(2) << i%10;
+		cout << endl;
+		for (int i = 0; i < n; i++)
+		{
+			cout << setw(2) << i%10;
+			for (int j = 0; j < n; j++)
+			{
+				cout << setw(2) << (adj[i][j] ? "1" : "-");
+			}
+			cout << endl;
+		}
 		
 		printf("\nTerras:\n");
 		for (int i = 0; i <= h*w+1; i++)
@@ -63,12 +77,18 @@ int  main()
 		
 		bipartir_com_BFS(adj);
 		
-		for (int i = 0; i <= h*w + 1; i++)
+		cout << endl << "  ";
+		for (int i = 0; i < n; i++)
+			cout << setw(2) << i%10;
+		cout << endl;
+		for (int i = 0; i < n; i++)
 		{
-			for (int j = 0; j <= h*w + 1; j++)
+			cout << setw(2) << i%10;
+			for (int j = 0; j < n; j++)
 			{
-				printf("%s ", adj[i][j] ? "1" : "-");
-			} printf("\n");
+				cout << setw(2) << (adj[i][j] ? "1" : "-");
+			}
+			cout << endl;
 		}
 
 		fordfulkerson();
@@ -83,6 +103,7 @@ int  main()
 void bipartir_com_BFS(vector<vector<int> > &adj)
 {
 	queue<pair<int, int> > fila;
+	queue<pair<int, int> > bipart;
 
 	pair<int, int> aux;
 	int davez, lado;
@@ -92,8 +113,9 @@ void bipartir_com_BFS(vector<vector<int> > &adj)
 		if (!visited[i])
 		{
 			fila.push(make_pair(i, 0));
+			bipart.push(make_pair(i, 0));
 			visited[i] = true;
-			//printf("Adicionando %2d na fila.\n", i);
+			printf("Adicionando %2d na fila.\n", i);
 		}
 
 		while (!fila.empty())
@@ -101,35 +123,47 @@ void bipartir_com_BFS(vector<vector<int> > &adj)
 			aux = fila.front(); fila.pop();
 			davez = aux.first;
 			lado = aux.second;
-			//printf("    nó %2d - lado %d:", davez, lado);
+			printf("    nó %2d - lado %d:\n", davez, lado);
 
-			if (!lado)
-			{
-				adj[source][davez] = 1; // source -> davez
-				for (int i = 1; i < n; i++)
-					adj[i][davez] = 0;
-				//printf(" é PAR. source -> %2d\n", davez);
-			}
-			else
-			{
-				adj[davez][sink] = 1; // davez -> sink
-				for (int i = 0; i < n-1; i++)
-					adj[davez][i] = 0;
-				//printf(" é ÍMPAR. %2d -> sink\n", davez);
-			}
-
-			for (int j = 1; j < adj[davez].size() - 1; j++)
+			for (int j = 1; j < n - 1; j++)
 			{
 				if (adj[davez][j] != 1) continue;
+				
 				if (!visited[j])
 				{
 					fila.push(make_pair(j, !lado));
+					bipart.push(make_pair(j, !lado));
 					visited[j] = true;
 					//adj[j][davez] = 0;
-					//printf("        Adicionando vizinho: %2d e removendo retorno.\n", j);
+					printf("        Adicionando vizinho: %2d e removendo retorno.\n", j);
 				}
 			}
-			//if (fila.empty()) printf("A fila acabou.\n");
+			if (fila.empty()) printf("A fila acabou.\n");
+		}
+	}
+
+	while (!bipart.empty())
+	{
+		aux = bipart.front(); bipart.pop();
+		davez = aux.first;
+		lado = aux.second;
+		cout << davez;
+
+		if (!lado)
+		{
+			adj[source][davez] = 1; // source -> davez
+			for (int i = 1; i < n; i++)
+				adj[i][davez] = 0;
+				
+			printf(" é PAR. source -> %2d\n", davez);
+		}
+		else
+		{
+			adj[davez][sink] = 1; // davez -> sink
+			for (int i = 0; i < n-1; i++)
+				adj[davez][i] = 0;
+				
+			printf(" é ÍMPAR. %2d -> sink\n", davez);
 		}
 	}
 
@@ -145,14 +179,14 @@ int fordfulkerson()
 	{
 		cout << endl << "  ";
 		for (int i = 0; i < n; i++)
-			cout << setw(3) << i;
+			cout << setw(2) << i%10;
 		cout << endl;
 		for (int i = 0; i < n; i++)
 		{
-			cout << setw(2) << i;
+			cout << setw(2) << i%10;
 			for (int j = 0; j < n; j++)
 			{
-				cout << setw(3) << (adj[i][j] ? "1" : "-");
+				cout << setw(2) << (adj[i][j] ? "1" : "-");
 			}
 			cout << endl;
 		}
