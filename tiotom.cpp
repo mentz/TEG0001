@@ -1,4 +1,8 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <iomanip>
+#include <map>
+#include <vector>
+#include <queue>
 
 #define INF 0xffffff
 
@@ -8,6 +12,7 @@ vector<vector<int> > 	mapa;
 vector<vector<int> > 	adj;
 vector<pair<int, int> > previous;
 vector<int> 		 	visited;
+vector<int>				caminho;
 int h, w, n, source, sink, fluxmax;
 
 void bipartir_com_BFS(vector<vector<int> > &adj);
@@ -19,6 +24,7 @@ int  main()
 	int a, b, c, y, x, v1, v2;
 	while (cin >> h >> w && h && w)
 	{
+		fluxmax = 0;
 		a = h; b = w; source = 0; sink = h*w+1; n = sink+1;
 		// Criar variáveis locais e setar Source e Sink.
 
@@ -45,16 +51,17 @@ int  main()
 			{
 				if (mapa[i][j] == 1)
 				{
-					if (i-1 > 0 && mapa[i-1][j] == 1) {printf("%d (%d,%d) - %d (%d,%d)\n", c, i, j, c-w, i-1, j); adj[c][c-w] = 1; adj[c-w][c] = 1; }
-					if (i+1 < h && mapa[i+1][j] == 1) {printf("%d (%d,%d) - %d (%d,%d)\n", c, i, j, c+w, i+1, j); adj[c][c+w] = 1; adj[c+w][c] = 1; }
-					if (j-1 > 0 && mapa[i][j-1] == 1) {printf("%d (%d,%d) - %d (%d,%d)\n", c, i, j, c-1, i, j-1); adj[c][c-1] = 1; adj[c-1][c] = 1; }
-					if (j+1 < w && mapa[i][j+1] == 1) {printf("%d (%d,%d) - %d (%d,%d)\n", c, i, j, c+1, i, j+1); adj[c][c+1] = 1; adj[c+1][c] = 1; }
+					if (i-1 > 0 && mapa[i-1][j] == 1) {/*printf("%d (%d,%d) - %d (%d,%d)\n", c, i, j, c-w, i-1, j);*/ adj[c][c-w] = 1; adj[c-w][c] = 1; }
+					if (i+1 < h && mapa[i+1][j] == 1) {/*printf("%d (%d,%d) - %d (%d,%d)\n", c, i, j, c+w, i+1, j);*/ adj[c][c+w] = 1; adj[c+w][c] = 1; }
+					if (j-1 > 0 && mapa[i][j-1] == 1) {/*printf("%d (%d,%d) - %d (%d,%d)\n", c, i, j, c-1, i, j-1);*/ adj[c][c-1] = 1; adj[c-1][c] = 1; }
+					if (j+1 < w && mapa[i][j+1] == 1) {/*printf("%d (%d,%d) - %d (%d,%d)\n", c, i, j, c+1, i, j+1);*/ adj[c][c+1] = 1; adj[c+1][c] = 1; }
 				}
 				c++;
 			}
 		}
-		// END Transformar para em grafo
+		// END Transformar mapa em grafo
 
+		/*
 		cout << endl << "  ";
 		for (int i = 0; i < n; i++)
 			cout << setw(2) << i%10;
@@ -68,15 +75,17 @@ int  main()
 			}
 			cout << endl;
 		}
+		*/
 		
 		printf("\nTerras:\n");
-		for (int i = 0; i <= h*w+1; i++)
+		for (int i = 1; i < n - 1; i++)
 		{
-			printf("%s%s", visited[i] ? "-": "S", !(i%4)? "\n" : " ");
+			printf("%s%s", visited[i] ? "-": "S", !(i%3)? "\n" : " ");
 		} printf("\n");
-		
+
 		bipartir_com_BFS(adj);
 		
+		/*
 		cout << endl << "  ";
 		for (int i = 0; i < n; i++)
 			cout << setw(2) << i%10;
@@ -90,6 +99,7 @@ int  main()
 			}
 			cout << endl;
 		}
+		*/
 
 		fordfulkerson();
 		cout << fluxmax << endl;
@@ -115,7 +125,6 @@ void bipartir_com_BFS(vector<vector<int> > &adj)
 			fila.push(make_pair(i, 0));
 			bipart.push(make_pair(i, 0));
 			visited[i] = true;
-			printf("Adicionando %2d na fila.\n", i);
 		}
 
 		while (!fila.empty())
@@ -123,7 +132,6 @@ void bipartir_com_BFS(vector<vector<int> > &adj)
 			aux = fila.front(); fila.pop();
 			davez = aux.first;
 			lado = aux.second;
-			printf("    nó %2d - lado %d:\n", davez, lado);
 
 			for (int j = 1; j < n - 1; j++)
 			{
@@ -134,11 +142,8 @@ void bipartir_com_BFS(vector<vector<int> > &adj)
 					fila.push(make_pair(j, !lado));
 					bipart.push(make_pair(j, !lado));
 					visited[j] = true;
-					//adj[j][davez] = 0;
-					printf("        Adicionando vizinho: %2d e removendo retorno.\n", j);
 				}
 			}
-			if (fila.empty()) printf("A fila acabou.\n");
 		}
 	}
 
@@ -147,23 +152,18 @@ void bipartir_com_BFS(vector<vector<int> > &adj)
 		aux = bipart.front(); bipart.pop();
 		davez = aux.first;
 		lado = aux.second;
-		cout << davez;
 
 		if (!lado)
 		{
 			adj[source][davez] = 1; // source -> davez
 			for (int i = 1; i < n; i++)
 				adj[i][davez] = 0;
-				
-			printf(" é PAR. source -> %2d\n", davez);
 		}
 		else
 		{
 			adj[davez][sink] = 1; // davez -> sink
 			for (int i = 0; i < n-1; i++)
 				adj[davez][i] = 0;
-				
-			printf(" é ÍMPAR. %2d -> sink\n", davez);
 		}
 	}
 
@@ -177,28 +177,19 @@ int fordfulkerson()
 
 	do
 	{
-		cout << endl << "  ";
-		for (int i = 0; i < n; i++)
-			cout << setw(2) << i%10;
-		cout << endl;
-		for (int i = 0; i < n; i++)
-		{
-			cout << setw(2) << i%10;
-			for (int j = 0; j < n; j++)
-			{
-				cout << setw(2) << (adj[i][j] ? "1" : "-");
-			}
-			cout << endl;
-		}
-
 		previous.assign(n, make_pair(-1, INF));
 		visited.assign(n, 0);
 		fluxo = 0;
 		dfs(source, sink, fluxo);
 		fluxmax += fluxo;
 
-		cout << source << endl << "f: " << fluxo << endl;
-
+		cout << "Caminho: s ";
+		while (caminho.size() > 0)
+		{
+			cout << caminho.at(caminho.size() - 1) << " ";
+			caminho.pop_back();
+		} cout << "t" << endl;
+		
 	} while (fluxo != 0);
 
 	return fluxmax;
@@ -222,24 +213,35 @@ int dfs(int davez, int sink, int &fluxo)
 		{
 			if (!visited[i])
 			{
-				peso = min(adj[davez][i], previous[davez].second);
-				previous[i] = make_pair(davez, peso); // Setar histórico do próximo para caso acerte o caminho.
-				if (dfs(i, sink, fluxo)) 
+				// Peso vai sendo mantido ou diminuido a cada iteração, nunca incrementado.
+				peso = min(adj[davez][i], previous[davez].second); 
+
+				// Marcar o histórico do próximo para caso acerte o caminho
+				previous[i] = make_pair(davez, peso);
+
+				if (dfs(i, sink, fluxo))  // SUCESSO
 				{
 					if (fluxo == 0)
-						fluxo = peso;
+						fluxo = peso; // Registrar o último
 					else
-						peso = min(peso, fluxo);
+						peso = min(peso, fluxo); // Reduzir os anteriores
 
-					cout << i << " ";
+					if (davez != source) caminho.push_back(davez);
 
+					// Fluxo é calculado com base no mínimo peso do caminho.
 					adj[davez][i] -= fluxo;
-					adj[i][davez] += fluxo; // Fluxo residual
+				
+					// Ajuste do fluxo residual
+					adj[i][davez] += fluxo;
 
 					return true;
 				}
-				visited[i] = false; // Desmarcar como visitado.
-				previous[i] = make_pair(-1, INF); // Limpar o histórico do próximo pois não acertou o caminho.
+
+				// Desmarcar como visitado
+				visited[i] = false;
+				
+				// Limpar o histórico do próximo
+				previous[i] = make_pair(-1, INF);
 			}
 		}
 	}
