@@ -77,11 +77,13 @@ int  main()
 		}
 		*/
 		
-		printf("\nTerras:\n");
+		printf("\nTerrenos:\n");
 		for (int i = 1; i < n - 1; i++)
 		{
-			printf("%s%s", visited[i] ? "-": "S", !(i%3)? "\n" : " ");
-		} printf("\n");
+			printf("%s", (visited[i]) ? "×" : "T");
+			printf("%s", !(i%w)? "\n" : "  ");
+		} printf("'×' indica lago, 'T' indica terra\n\n");
+
 
 		bipartir_com_BFS(adj);
 		
@@ -102,7 +104,8 @@ int  main()
 		*/
 
 		fordfulkerson();
-		cout << fluxmax << endl;
+		cout << "\nPropriedades: " << fluxmax
+			 << "\n----------------------\n";
 
 	}
 
