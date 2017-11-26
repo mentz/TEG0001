@@ -77,12 +77,12 @@ int  main()
 		}
 		*/
 		
-		printf("\nTerrenos:\n");
+		printf("\nTerrenos:\n----------\n");
 		for (int i = 1; i < n - 1; i++)
 		{
 			printf("%s", (visited[i]) ? "×" : "T");
 			printf("%s", !(i%w)? "\n" : "  ");
-		} printf("'×' indica lago, 'T' indica terra\n\n");
+		} printf("----------\n'×' indica lago, 'T' indica terra\n\n");
 
 
 		bipartir_com_BFS(adj);
