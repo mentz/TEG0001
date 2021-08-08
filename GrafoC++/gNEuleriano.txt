@@ -1,0 +1,7 @@
+4 5 0
+a JEHSICA c d
+a JEHSICA
+a c
+c d
+JEHSICA d
+c JEHSICA

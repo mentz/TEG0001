@@ -1,0 +1,11 @@
+5 9 3
+t x z u v
+t x 10
+x z 9
+t u 7
+u x 2
+v x 1
+u v 8
+v u -7
+v z 2
+u z 11
